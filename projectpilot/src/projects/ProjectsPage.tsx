@@ -45,6 +45,7 @@ function ProjectsPage(){
     };
 
     const handleSave = (project: Project) => {
+          console.log(project);
         //console.log("Saving project:", project);
         // Implement save logic here
         // const updatedProjects = projects.map((p: Project) => {
@@ -52,11 +53,11 @@ function ProjectsPage(){
         // });
         // setProjects(updatedProjects);
         projectAPI.put(project)
-            .then((updateProject) => {
+            .then((updatedProject) => {
                     const updatedProjects = projects.map((p: Project) => {
-                    return p.id === project.id ? new Project(updateProject) : p;
-                    setProjects(updatedProjects);
+                    return p.id === project.id ? new Project(updatedProject) : p;
                 });
+                setProjects(updatedProjects);
             })
             .catch((err) => {
                 if(err instanceof Error){
