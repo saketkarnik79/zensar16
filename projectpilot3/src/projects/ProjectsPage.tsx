@@ -2,8 +2,14 @@
 import ProjectList from "./ProjectList";
 //import Project from "./Project";
 //import { useState, useEffect } from "react";
+import { useEffect } from "react";
 //import { projectAPI } from "./services/projectAPI";
-import { useProjects } from "./hooks/projectHooks";
+import { useSelector, useDispatch } from "react-redux";
+import { type AppState } from "../store";
+import { type ProjectState } from "./state/projectTypes";
+import { loadProjects } from "./state/projectActions";
+import { type AnyAction} from "redux";
+import { type ThunkDispatch } from "redux-thunk";
 
 function ProjectsPage(){
     //const [projects, setProjects]=useState<Project[]>(MOCK_PROJECTS);
@@ -11,6 +17,14 @@ function ProjectsPage(){
     // const [loading, setLoading]=useState(false);
     // const [error, setError] = useState<string | undefined>(undefined);
     // const [currentPage, setCurrentPage] = useState<number>(1);
+
+    const projects = useSelector((appState: AppState) => appState.projectState.projects);
+    const loading = useSelector((appState: AppState) => appState.projectState.loading);
+    const error = useSelector((appState: AppState) => appState.projectState.error);
+    const currentPage = useSelector((appState: AppState) => appState.projectState.page);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dispatch: ThunkDispatch<ProjectState, any, AnyAction> = useDispatch<ThunkDispatch<ProjectState, any, AnyAction>>();
 
     // useEffect(() => {
     //     async function loadProjects() {
@@ -40,10 +54,10 @@ function ProjectsPage(){
     // //}, []);
     // }, [currentPage]);
 
-    const {projects, loading, error, setCurrentPage, saveProject, saving, savingError} = useProjects();
-
     const handleMoreClick = () => {
-        setCurrentPage((currentPage)=> currentPage + 1);
+
+        //setCurrentPage((currentPage)=> currentPage + 1);
+        dispatch(loadProjects(currentPage + 1));
     };
 
     // const handleSave = (project: Project) => {
@@ -68,6 +82,10 @@ function ProjectsPage(){
     //         });
     // }
 
+    useEffect(() => {
+        dispatch(loadProjects(1));
+    }, [dispatch]);
+
     return (
         <>
             <h1>Projects</h1>
@@ -75,9 +93,6 @@ function ProjectsPage(){
             {/* <pre>
                 {JSON.stringify(MOCK_PROJECTS, null, 2)}
             </pre> */}
-            { saving && (
-                <span className="toast">Saving...</span>
-            ) }
 
             {
                 error && (
@@ -85,30 +100,19 @@ function ProjectsPage(){
                         <div className="card large error">
                             <section>
                                 <p>
-                                    <span className="icon-alert inverse"></span>
-                                     {error}
+                                    <span className="icon-alert inverse">
+                                        {error}
+                                    </span>
                                 </p>
                             </section>
                         </div>
                     </div>
                 )
             }
-            {
-                savingError && (
-                    <div className="card large error">
-                        <section>
-                            <p>
-                                <span className="icon-alert inverse"></span>
-                                {savingError}
-                            </p>
-                        </section>    
-                    </div>
-                )
-            }
 
             {/* <ProjectList projects={MOCK_PROJECTS} onSave={handleSave} /> */}
             {/* <ProjectList projects={projects} onSave={handleSave} /> */}
-            <ProjectList projects={projects} onSave={saveProject} />
+            <ProjectList projects={projects} />
             {
                 !loading && !error && (
                     <div className="row">

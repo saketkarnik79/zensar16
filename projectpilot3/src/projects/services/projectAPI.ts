@@ -32,12 +32,12 @@ function parseJSON(response: Response){
     return response.json();
 }
 
-function delay(ms: number){
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return function(x: any): Promise<any> {
-        return new Promise((resolve) => setTimeout(() => resolve(x), ms));
-    };
-}
+// function delay(ms: number){
+//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//     return function(x: any): Promise<any> {
+//         return new Promise((resolve) => setTimeout(() => resolve(x), ms));
+//     };
+// }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function convertToProjectModel(item: any): Project {
@@ -52,7 +52,7 @@ function convertToProjectModels(res: { data: unknown[] }): Project[]{
 const projectAPI = {
     get(page = 1, limit = 20){
         return fetch(`${baseUrl}?_page=${page}&_per_page=${limit}`)
-            .then(delay(2000))
+            // .then(delay(1000))
             .then(checkStatus)
             .then(parseJSON)
             .then(convertToProjectModels)
@@ -69,7 +69,7 @@ const projectAPI = {
             },
             body: JSON.stringify(project)
          })
-            .then(delay(2000))
+            // .then(delay(1000))
             .then(checkStatus)
             .then(parseJSON)
             .catch((error: TypeError) => {
@@ -79,7 +79,7 @@ const projectAPI = {
     },
     find(id: number){
          return fetch(`${baseUrl}/${id}`)
-            .then(delay(2000))
+            // .then(delay(1000))
             .then(checkStatus)
             .then(parseJSON)
             .then(convertToProjectModel)
